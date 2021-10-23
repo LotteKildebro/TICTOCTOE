@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<title>Tic Tac Toe</title>
+</head>
+
+<body>
+	<h1>TIC TAC TOE, 2 player</h1>
+	<table width="400" border="1">
+		<tbody>
+			<tr>
+				<td id="0">&nbsp;</td>
+				<td id="1">&nbsp;</td>
+				<td id="2">&nbsp;</td>
+			</tr>
+			<tr>
+				<td id="3">&nbsp;</td>
+				<td id="4">&nbsp;</td>
+				<td id="5">&nbsp;</td>
+			</tr>
+			<tr>
+				<td id="6">&nbsp;</td>
+				<td id="7">&nbsp;</td>
+				<td id="8">&nbsp;</td>
+			</tr>
+		</tbody>
+	</table>
+	<h2>Game score</h2>
+	<p>Player X :</p>
+	<h2 id="counterX">0</h2>
+	<p>Player O :</p>
+	<h2 id="counterO">0</h2>
+	<h2 id="msg">Click fields to play!</h2>
+	<button id="restart">Restart game!</button>
+
+	<script>
+		/*
+																																																																																																																																																																																																																																																																																																																																																																																																																Stuff to handle ;-):
+																																																																																																																																																																																																																																																																																																																																																																																																																1. Make the fields clickable (player0 uses "X", player1 "0")
+																																																																																																																																																																																																																																																																																																																																																																																																																2. Keep track of all used fields (fieldsPlayed) and of the fields each player chose (fieldsPlayer0, fieldsPlayer1)
+																																																																																																																																																																																																																																																																																																																																																																																																																3. Avoid that úsed fields can be played again and implement feedback like "Field already taken" (alert();)
+																																																																																																																																																																																																																																																																																																																																																																																																																4. Check for winning combinations
+																																																																																																																																																																																																																																																																																																																																																																																																																5. Implement feedback to the players (winning or game is a draw)
+																																																																																																																																																																																																																																																																																																																																																																																																																6. End the game, avoid further playing
+																																																																																																																																																																																																																																																																																																																																																																																																																7. Add a "Play again button"
+																																																																																																																																																																																																																																																																																																																																																																																																																8. Implement "eternal" game statistics (using local storage!)
+																																																																																																																																																																																																																																																																																																																																																																																																																9. Style the game as fancy and responsive as you can ;-)
+
+																																																																																																																																																																																																																																																																																																																																																																																																																*/
+
+		// global game variables
+		let player, fields, fieldPlayed, fieldPlayer0, fieldPlayer1, msg, Xcount, Ocount;
+
+		document.getElementById("restart").addEventListener("click", playAgain);
+
+		player = 0;
+
+		fields = [];
+		fields = document.getElementsByTagName("td");
+		console.log(fields);
+
+		fieldPlayed = [];
+		fieldPlayer0 = [];
+		fieldPlayer1 = [];
+
+		msg = document.querySelector('#msg');
+		Xcount = document.querySelector('#counterX');
+		Ocount = document.querySelector('#counterO');
+
+		//player1 and player2 score
+		let XScore = 0;
+		let OScore = 0;
+
+		console.log(counterX, counterO, Ocount)
+
+		for (let i = 0; i < fields.length; i++) {
+			fields[i].addEventListener("click", play)
+		}
+
+		function play() {
+			// game score mechanics, marking the fields
+			console.log('hello');
+
+			if (player === 0 && !fieldPlayed.includes(this.id)) {
+				this.innerHTML = "X";
+				this.style.color = 'blue';
+				fieldPlayer0.push(parseInt(this.id));
+				player = 1;
+			} else if (player === 1 && !fieldPlayed.includes(this.id)) {
+				this.innerHTML = "O";
+				this.style.color = 'pink';
+				fieldPlayer1.push(parseInt(this.id));
+				player = 0;
+			}
+
+			fieldPlayed.push(this.id);
+			console.log(fieldPlayed);
+			win();
+		}
+
+
+		function win() {
+			// analyzing field choices, winning conditions, feedback
+			if (
+				fieldPlayer0.includes(0) && fieldPlayer0.includes(1) && fieldPlayer0.includes(2) ||
+				fieldPlayer0.includes(3) && fieldPlayer0.includes(4) && fieldPlayer0.includes(5) ||
+				fieldPlayer0.includes(6) && fieldPlayer0.includes(7) && fieldPlayer0.includes(8) ||
+				fieldPlayer0.includes(0) && fieldPlayer0.includes(3) && fieldPlayer0.includes(6) ||
+				fieldPlayer0.includes(1) && fieldPlayer0.includes(4) && fieldPlayer0.includes(7) ||
+				fieldPlayer0.includes(2) && fieldPlayer0.includes(5) && fieldPlayer0.includes(8) ||
+				fieldPlayer0.includes(2) && fieldPlayer0.includes(4) && fieldPlayer0.includes(6)
+			) {
+				msg.innerHTML = 'player X won!'
+				gameStats();
+				gameOver();
+
+			} else if (
+				fieldPlayer1.includes(0) && fieldPlayer1.includes(1) && fieldPlayer1.includes(2) ||
+				fieldPlayer1.includes(3) && fieldPlayer1.includes(4) && fieldPlayer1.includes(5) ||
+				fieldPlayer1.includes(6) && fieldPlayer1.includes(7) && fieldPlayer1.includes(8) ||
+				fieldPlayer1.includes(0) && fieldPlayer1.includes(3) && fieldPlayer1.includes(6) ||
+				fieldPlayer1.includes(1) && fieldPlayer1.includes(4) && fieldPlayer1.includes(7) ||
+				fieldPlayer1.includes(2) && fieldPlayer1.includes(5) && fieldPlayer1.includes(8) ||
+				fieldPlayer1.includes(2) && fieldPlayer1.includes(4) && fieldPlayer1.includes(6)
+			) {
+				msg.innerHTML = 'player O won!'
+				gameStats();
+				gameOver();
+			} else if (fieldPlayed.length == 9) {
+				msg.innerHTML = 'there was a tie!'
+				gameOver();
+			}
+		}
+
+		function gameOver() {
+			// ending the game 
+			for (let i = 0; i < fields.length; i++) {
+				fields[i].removeEventListener("click", play)
+			}
+		}
+
+		function playAgain() {
+			// restart the game
+			window.location.reload(true);
+		}
+
+		function gameStats() {
+			// game stats using local storage
+
+			if (msg.innerHTML = 'player X won!') {
+				XScore++;
+				Xcount.innerHTML = XScore;
+			} else if (msg.innerHTML = 'player O won!') {
+				OScore++;
+				Ocount.innerHTML = OScore;
+			}
+
+		}
+	</script>
+</body>
+
+</html>
