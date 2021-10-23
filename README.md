@@ -1,2 +1,2 @@
-# TICTOCTOE
+# TICTACTOE
 a game for simple minds
